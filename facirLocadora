@@ -1,0 +1,939 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_FILMES 100	 // tamanho da lista de filmes
+#define MAX_CLIENTES 100 // tamanho da lista de clientes
+#define MAX_ESTOQUE 300	 // tamanho da lista de estoque
+
+struct filmes
+{ // 1- estrutura Filmes
+	int identificador;
+	char titulo[50];
+	int anoDeProducao;
+	char genero[50];
+};
+typedef struct filmes Tfilmes; // 1 - Define que o nome da estrutura filmes é do tipo Tfilmes.
+
+Tfilmes listaFilmes[MAX_FILMES]; // Estrutura Tfilmes recebe a listaFilmes e dentro tem[ Maxfilmes ]que é a quantidade permitada dentro da lista de cadastro.
+
+int nFilmes = 0;
+int encerrar = 0;
+
+int menuFilmesOpcao()
+{
+
+	int opcao;
+	int c;
+
+	printf("\n  MENU FILMES  -\n ");
+	printf("[0] - Encerrar -\n");
+	printf(" [1] - Voltar para o Menu Principal -\n");
+	printf(" [2] - Listar Filmes -\n");
+	printf(" [3] - Localizar Filmes -\n");
+	printf(" [4] - Editar filme -\n");
+	printf(" [5] - Novo filme -\n");
+	fflush(stdout);
+	scanf("%i", &opcao);
+	while ((c = getchar()) != '\n' && c != EOF)
+	{
+	}
+
+	return opcao;
+}
+
+void cadastrarFilmes()
+{
+
+	Tfilmes filme; // Faz com o que recebe a estrutura filme dentro do cadastrarFilma.
+
+	printf("Digite o Gênero:\n");
+	fflush(stdout);
+	gets(filme.genero);
+
+	printf("Digite o Título:\n");
+	fflush(stdout);
+	gets(filme.titulo);
+
+	printf("Digite o Ano de Produção:\n");
+	fflush(stdout);
+	scanf("%i", &filme.anoDeProducao);
+
+	printf("Digite o Identificador:\n");
+	fflush(stdout);
+	scanf("%i", &filme.identificador);
+
+	int indice = buscarIndiceFilmes(filme.identificador);
+	if (indice == -1)
+	{
+		listaFilmes[nFilmes] = filme; // cadastrado no FILME.
+		nFilmes++;					  // verifica a quantidade de casas que identificam os filmes cadastrados.
+	}
+	else
+	{
+		printf("Filme já cadastrado no sistema,Identificador invalido.\n");
+	}
+}
+
+void listarFilmes()
+{
+	// foi declarado a variavel "nFilmes=0" la em cima. Codigo -> Se nFilmes  igual a 0, não irá encontrar nada pois essa opção nao existe.
+	if (nFilmes == 0)
+	{
+		printf("Lista de filmes vazia.\n");
+	}
+	// foi declarado a variavel i, e enquanto i  menor que nFilmes, ele vai incrementar
+	for (int i = 0; i < nFilmes; ++i)
+	{
+
+		printf("%s\n", listaFilmes[i].titulo); // E vai printar o titulo de todos os filmes que estão na posição i
+	}
+}
+
+Tfilmes consultarFilme()
+{
+	// no começo de toda função é definido o Tipo do retorno da função
+	// pq nao int consultarFilmes ? pq a intenção é devolver o filme que o cara consultou
+
+	int identificador;
+	int c;
+	Tfilmes filme; // o tipo da função
+
+	filme.identificador = -1; // (indicador de filme não encontrado) o identificador para mostrar que nao tem filme por ser -1. Executando todas as linhas e no final filme.identificador continuar sendo -1, siguinifica que eu não achei o filme.
+	printf("Digite o Identificador do Filme:  ");
+	fflush(stdout);
+	scanf("%i", &identificador);
+
+	for (int i = 0; i < nFilmes; i++)
+	{
+		if (listaFilmes[i].identificador == identificador)
+		{							// ele procura la na listafilmes se tem o mesmo identificador que o usuario digitou.
+			filme = listaFilmes[i]; // e filme será listaFilmes[i], por que irá exibir toda especificação que tem na listaFilme
+		}
+	}
+	while ((c = getchar()) != '\n' && c != EOF)
+	{
+	}
+	return filme; // retoruno da função
+}
+
+Tfilmes consultarFilmePorTitulo()
+{
+
+	char titulo[50];
+	Tfilmes filme;
+
+	filme.identificador = -1;
+	printf("Digite o Titulo do Filme:  ");
+	fflush(stdout);
+	gets(titulo);
+
+	for (int i = 0; i < nFilmes; i++)
+	{
+		if (strcmp(listaFilmes[i].titulo, titulo) == 0)
+		{
+			filme = listaFilmes[i];
+		}
+	}
+
+	return filme;
+}
+
+void vizualizarFilme(Tfilmes filme)
+{
+	if (filme.identificador == -1)
+	{
+		// se o usuario digitar qualquer outro numero, nao vai encontrar. Pq o id nao ta cadastrado, e esse -1 é um valor que nao existe.
+		printf("Filme não encontrado");
+	}
+	else
+	{
+		printf("Identificador: %i\n", filme.identificador);
+		printf("titulo  %s\n", filme.titulo);
+		printf("Ano de Produção %i\n", filme.anoDeProducao);
+		printf("Gênero %s\n", filme.genero);
+	}
+}
+
+// o buscarIndice só serve pra você saber em qual posição da lista aquele filme se encontra
+int buscarIndiceFilmes(int identificador)
+{ // o que tem dentro do ( ) é um parametro
+
+	for (int i = 0; i < nFilmes; i++)
+	{
+		// if ( listafilmes tiver o identificador que tiver no parametro, ele mostra i = indice.
+		if (listaFilmes[i].identificador == identificador)
+		{
+			return i; // retorna i(indice) se achar o filme ( a casa onde ele se encontra)
+		}
+	}
+
+	return -1; // retorna -1 se nao achar o filme.
+}
+void atualizarFilme()
+{
+
+	Tfilmes filme = consultarFilme(); // filme vai ser agora consultar pq ta puxando a função de cima
+
+	// vai consultar la em consultarfilmes se tem o mesmo id
+	if (filme.identificador == -1)
+	{
+		printf("Filme não encontrado\n");
+	}
+	else
+	{
+		printf("Digite o novo Gênero:\n");
+		fflush(stdout);
+		gets(filme.genero);
+
+		printf("Digite o novo Título:\n");
+		fflush(stdout);
+		gets(filme.titulo);
+
+		printf("Digite o novo Ano de Produção:\n");
+		fflush(stdout);
+		scanf("%i", &filme.anoDeProducao);
+
+		int posicao = buscarIndiceFilmes(filme.identificador); // posição será buscar indice (com parametro)
+		listaFilmes[posicao] = filme;						   // e listafilmes[posicao] será toda estrutura do filme.
+	}
+}
+
+void removerFilme(int indice)
+{
+	int posicao = indice + 1;
+	int i = 0;
+
+	if ((posicao < 1) || (posicao > nFilmes))
+	{
+		printf("\nPosicao invalida!\n");
+		return;
+	}
+
+	// 1. caso - remover no final do vetor
+	if (posicao == nFilmes)
+	{
+		nFilmes--;
+		return;
+	}
+
+	// 2. remove qualquer outra posicao
+	for (i = indice; i < nFilmes; i++)
+	{
+		listaFilmes[i] = listaFilmes[i + 1];
+	}
+	nFilmes--;
+}
+
+void menuPrincipal()
+{
+	int opcao = -1;
+
+	while (encerrar == 0)
+	{
+		opcao = menuPrincipalOpcao();
+		if (opcao == 0)
+		{
+			printf("\n-------------- FIM DE PROGRAMA------------------\n");
+			encerrar = 1;
+			break;
+		}
+		if (opcao == 1)
+		{
+			menuFilmes();
+		}
+		else if (opcao == 2)
+		{
+			menuClientes();
+		}
+		else if (opcao == 3)
+		{
+			menuEstoque();
+		}
+		else
+		{
+			printf("Opcao Invalida, digite uma opcao valida\n");
+		}
+	}
+}
+
+int menuEditarFilmesOpcao()
+{ // isso tudo deveria ta dentro do menuprincipal, mas pra não ficar tudo isso lá dentro eu  coloquei em uma função
+	int opcao;
+	int c;
+	printf("\n");
+	printf(" [0] - Voltar para Menu Filmes -\n");
+	printf(" [1] - Atualizar Filme -\n");
+	printf(" [2] - Excluir Filme -\n");
+
+	fflush(stdout);
+	scanf("%i", &opcao);
+	while ((c = getchar()) != '\n' && c != EOF)
+	{
+	}
+
+	return opcao;
+}
+void menuEditarFilmes()
+{
+	int opcao;
+	while (1)
+	{
+		opcao = menuEditarFilmesOpcao();
+		if (opcao == 0)
+		{
+			break;
+		}
+		else if (opcao == 1)
+		{
+			atualizarFilme();
+		}
+		else if (opcao == 2)
+		{
+			Tfilmes filme = consultarFilme();
+			if (filme.identificador == -1)
+			{
+				printf("Filme não encontrado\n");
+			}
+			else
+			{
+				int indice = buscarIndiceFilmes(filme.identificador); // esse indice será agora buscarindicefilmes pelo filme.identificdor
+				removerFilme(indice);								  // depois ira remover o filme pelo indice
+
+				printf("Filme Removido com Sucesso.\n");
+			}
+		}
+	}
+}
+
+void menuFilmes()
+{
+	int opcao = -1;
+	while (encerrar == 0)
+	{
+		opcao = menuFilmesOpcao();
+		if (opcao == 0)
+		{
+			printf("\n-------------- FIM DE PROGRAMA------------------\n");
+			encerrar = 1;
+			break;
+		}
+		else if (opcao == 1)
+		{
+			menuPrincipal();
+			break;
+		}
+		else if (opcao == 2)
+		{
+			listarFilmes();
+		}
+		else if (opcao == 3)
+		{
+			Tfilmes filme = consultarFilme();
+			if (filme.identificador == -1)
+			{
+
+				printf("Filme nao encontrado."); // se não achar nada, a consultaFilme retorna um filme com identificador = -1
+			}
+			else
+			{
+				vizualizarFilme(filme);
+			}
+		}
+		else if (opcao == 4)
+		{
+			menuEditarFilmes();
+		}
+		else if (opcao == 5)
+		{
+
+			cadastrarFilmes();
+		}
+		else
+		{
+			printf("Filme já cadastrado! ");
+		}
+	}
+}
+
+int menuPrincipalOpcao()
+{
+
+	int opcao;
+	int c;
+	printf("\n  MENU PRINCIPAL  -\n ");
+	printf("[0] - Encerrar -\n");
+	printf(" [1] - Filmes -\n");
+	printf(" [2] - Clientes -\n");
+	printf(" [3] - Alugar -\n");
+	printf(" [4] - Devolver -\n");
+
+	fflush(stdout);
+	scanf("%i", &opcao);
+	while ((c = getchar()) != '\n' && c != EOF)
+	{
+	}
+
+	return opcao;
+}
+
+struct clientes
+{
+
+	char nome[40];
+	char cpf[14];
+	char email[35];
+};
+
+typedef struct clientes Tclientes;
+
+Tclientes listaClientes[MAX_CLIENTES];
+int nClientes = 0;
+
+void cadastrarClientes()
+{
+
+	Tclientes clientes;
+
+	printf("Digite o nome:\n");
+	fflush(stdout);
+	gets(clientes.nome);
+
+	printf("Digite o CPF:\n");
+	fflush(stdout);
+	gets(clientes.cpf);
+
+	printf("Digite o Email:\n");
+	fflush(stdout);
+	gets(clientes.email);
+
+	listaClientes[nClientes] = clientes;
+	nClientes++;
+}
+
+int buscarIndiceCliente(char *nome)
+{
+
+	for (int i = 0; i < nClientes; i++)
+	{
+		if (strcmp(listaClientes[i].nome, nome) == 0)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+Tclientes consultarCliente()
+{
+
+	char nome[40];
+	Tclientes cliente;
+	fflush(stdout);
+	printf("Digite o nome do Cliente:  ");
+	fflush(stdout);
+	gets(nome);
+	int achou = 0; // variavel de controle caso encontre o cliente
+
+	for (int i = 0; i < nClientes; i++)
+	{
+		if (strcmp(listaClientes[i].nome, nome) == 0)
+		{
+			cliente = listaClientes[i];
+			achou = 1;
+		}
+	}
+
+	if (achou == 0)
+	{
+		cliente.cpf[0] = '\0';
+		cliente.nome[0] = '\0';
+		cliente.email[0] = '\0';
+	}
+
+	return cliente;
+}
+
+void atualizarCliente()
+{
+
+	Tclientes cliente = consultarCliente();
+
+	if (cliente.nome[0] == '\0')
+	{
+		printf("Cliente não encontrado\n");
+	}
+	else
+	{
+
+		int i = buscarIndiceCliente(cliente.nome);
+		fflush(stdout);
+
+		printf("Digite o novo CPF:\n");
+		fflush(stdout);
+		gets(cliente.cpf);
+
+		printf("Digite o novo E-mail:\n");
+		fflush(stdout);
+		gets(cliente.email);
+
+		listaClientes[i] = cliente;
+	}
+}
+
+void removerCliente(int indice)
+{
+
+	int posicao = indice + 1;
+	int i = 0;
+
+	if ((posicao < 1) || (posicao > nClientes))
+	{
+		printf("\nPosicao invalida!\n");
+		return;
+	}
+
+	if (posicao == nClientes)
+	{
+		nClientes--;
+		return;
+	}
+
+	for (i = indice; i < nClientes; i++)
+	{
+		listaClientes[i] = listaClientes[i + 1];
+	}
+	nClientes--;
+}
+
+void listarClientes()
+{
+
+	if (nClientes == 0)
+	{
+		printf("A lista de Cliente está vazia\n");
+	}
+	for (int i = 0; i < nClientes; ++i)
+	{
+
+		printf("%s\n", listaClientes[i].nome);
+	}
+}
+
+void vizualizarCliente(Tclientes cliente)
+{
+
+	if (cliente.nome[0] == '\0')
+	{
+		printf("Cliente não encontrado\n");
+	}
+	else
+	{
+		printf("Nome %s\n", cliente.nome);
+		printf("CPF  %s\n", cliente.cpf);
+		printf("Email %s\n", cliente.email);
+	}
+}
+
+void editarCliente()
+{
+	int opcao = -1;
+	while (1)
+	{
+		int c;
+
+		printf(" [0] - Voltar para o Menu Clientes -\n");
+		printf(" [1] - Atualizar Cliente -\n");
+		printf(" [2] - Excluir Cliente -\n");
+
+		fflush(stdout);
+		scanf("%i", &opcao);
+		while ((c = getchar()) != '\n' && c != EOF)
+		{
+		}
+
+		if (opcao == 0)
+		{
+			menuClientes();
+			break;
+		}
+		else if (opcao == 1)
+		{
+			atualizarCliente();
+		}
+		else if (opcao == 2)
+		{
+			Tclientes cliente = consultarCliente();
+			if (cliente.nome[0] == '\0')
+			{
+				printf("Cliente nao encontrado.\n");
+			}
+			else
+			{
+				int indice = buscarIndiceCliente(cliente.nome);
+				removerCliente(indice);
+				printf("Cliente excluido.\n");
+			}
+		}
+		else
+		{
+			printf("Opção Invanlida\n");
+		}
+	}
+}
+
+void menuClientes()
+{
+
+	int opcao = -1;
+	Tclientes cliente;
+	while (encerrar == 0)
+	{
+
+		int c;
+		printf("\n  MENU CLIENTES  -\n");
+		printf(" [0] - Encerrar -\n");
+		printf(" [1] - Voltar para o Menu Principal -\n");
+		printf(" [2] - Listar Clientes -\n");
+		printf(" [3] - Localizar Clientes -\n");
+		printf(" [4] - Editar Clientes -\n");
+		printf(" [5] - Novo Cliente -\n");
+
+		fflush(stdout);
+		scanf("%i", &opcao);
+		while ((c = getchar()) != '\n' && c != EOF)
+		{
+		}
+
+		if (opcao == 0)
+		{
+			printf("\n-------------- FIM DE PROGRAMA------------------\n");
+			encerrar = 1;
+			break;
+		}
+		if (opcao == 1)
+		{
+			menuPrincipal();
+		}
+		else if (opcao == 2)
+		{
+			listarClientes();
+		}
+		else if (opcao == 3)
+		{
+
+			Tclientes cliente = consultarCliente();
+			vizualizarCliente(cliente);
+		}
+		else if (opcao == 4)
+		{
+			editarCliente();
+			break;
+		}
+		else if (opcao == 5)
+		{
+			cadastrarClientes();
+		}
+	}
+}
+
+struct estoqueFilme
+{
+
+	int identificador;
+	int identificadorFilme;
+	char dataEntrada[11];
+};
+
+typedef struct estoqueFilme TestoqueFilme; //  Define que o nome da estrutura estrutura Estoque é do tipo TestoqueFilme
+
+TestoqueFilme listaEstoque[MAX_ESTOQUE];
+
+int nFilmesEstoque = 0;
+
+int menuEstoqueOpcao()
+{
+	int opcao;
+	int c;
+
+	printf("\n  MENU ESTOQUE  -\n");
+	printf(" [0] - Encerrar -\n");
+	printf(" [1] - Menu Pricipal -\n");
+	printf(" [2] - Cadastrar -\n");
+	printf(" [3] - Listar -\n");
+	printf(" [4] - Consultar-\n");
+	printf(" [5] - Atualizar -\n");
+	printf(" [6] - Remover -\n");
+
+	fflush(stdout);
+	scanf("%i", &opcao);
+	while ((c = getchar()) != '\n' && c != EOF)
+	{
+	}
+
+	return opcao;
+}
+
+void cadastrarFilmesEstoque()
+{
+
+	int c;
+	Tfilmes filme = consultarFilme(); // // variavel filme recebe um filme consultado da lista de filmes
+	// nao precisa pedir para qe digite o idfilme, pq o consultar jogou pra dentro de filme , o filme que ele consultou já com o ID que o usuario digitou
+
+	TestoqueFilme estoqueFilme;
+
+	if (filme.identificador == -1)
+	{
+		printf(" filme nao cadastrado.\n Por favor, cadastre o filme para inseri-lo no estoque\n");
+	}
+	else
+	{
+
+		printf("Digite o Identificador:\n");
+		fflush(stdout);
+		scanf("%i", &estoqueFilme.identificador);
+
+		while ((c = getchar()) != '\n' && c != EOF)
+		{
+		}
+
+		printf("Digite a Data de Entrada:\n");
+		fflush(stdout);
+		gets(estoqueFilme.dataEntrada);
+
+		estoqueFilme.identificadorFilme = filme.identificador; // estoqueFilme.identificadorFilme  vai recebe dentro do estoque  o mesmo id do filme.identificador que esta sendo cadastrado
+		listaEstoque[nFilmesEstoque] = estoqueFilme;		   // listaEstoque[nFilmesEstoque] é o proximo espaço livre da lista de estoque e é o estoque que você vai armazenar nesse espaço
+		nFilmesEstoque++;									   // será pra ele na proxima vez que cadastrar já cadastrar na proxima casinha do estoque
+	}
+}
+
+void listarEstoque()
+{
+	if (nFilmesEstoque == 0)
+	{
+		printf("Estoque vazio.\n");
+	}
+	for (int i = 0; i < nFilmesEstoque; ++i)
+	{
+
+		printf("Identificador do Estoque : %i - \n", listaEstoque[i].identificador);
+		printf("Identificador do Filme : %i\n", listaEstoque[i].identificadorFilme);
+		printf("Data de Entrada : %s\n", listaEstoque[i].dataEntrada);
+	}
+}
+
+TestoqueFilme consultarEstoquePorTitulo()
+{ // função para consultar filme por titulo dentro do estoque
+
+	Tfilmes filme = consultarFilmePorTitulo();
+
+	TestoqueFilme estoqueFilme;
+
+	estoqueFilme.identificador = -1; //
+
+	for (int i = 0; i < nFilmesEstoque; i++)
+	{
+		if (listaEstoque[i].identificadorFilme == filme.identificador)
+		{									// compara se o que usuario digitou está no estoque ( listaEstoque)
+			estoqueFilme = listaEstoque[i]; // finalidade de que o estoqueFilme tenha dentro aquela estoque que está lá no lista[i], exemplo... estoque 1, 2,3...
+		}
+	}
+	return estoqueFilme;
+}
+
+TestoqueFilme consultarEstoque()
+{ // função para consultar o estoque
+
+	int c;
+	int identificador;
+	TestoqueFilme estoqueFilme;
+
+	estoqueFilme.identificador = -1; // ele é o indicador que o estoque nao foi encontrado
+
+	printf("Digite o Identificador do Estoque:\n ");
+	fflush(stdout);
+	scanf("%i", &identificador);
+
+	for (int i = 0; i < nFilmesEstoque; i++)
+	{
+		if (listaEstoque[i].identificador == identificador)
+		{									// compara se o que usuario digitou está no estoque ( listaEstoque)
+			estoqueFilme = listaEstoque[i]; // substitui o identificador do estoque -1 para o identificador informado pelo usuario e atribui toda estrutura
+		}
+	}
+
+	while ((c = getchar()) != '\n' && c != EOF)
+	{
+	}
+	return estoqueFilme;
+}
+void visualizarEstoque(TestoqueFilme estoqueFilme)
+{
+
+	if (estoqueFilme.identificador == -1)
+	{
+		printf("Identificador nao encontrado no estoque.\n");
+	}
+	else
+	{
+		printf("Identificador: %i\n", estoqueFilme.identificador);
+		printf("Identificador do Filme %i\n", estoqueFilme.identificadorFilme);
+		printf("Ano de Produção %s\n", estoqueFilme.dataEntrada);
+	}
+}
+
+int menuEditarEstoqueOpcao()
+{
+	int opcao;
+	int c;
+
+	printf("\n");
+	printf(" [0] - Voltar para Menu Filmes -\n");
+	printf(" [1] - Atualizar Filme -\n");
+	printf(" [2] - Excluir Filme -\n");
+
+	fflush(stdout);
+	scanf("%i", &opcao);
+	while ((c = getchar()) != '\n' && c != EOF)
+	{
+	}
+
+	return opcao;
+}
+
+void atualizarEstoque()
+{
+
+	TestoqueFilme estoque = consultarEstoque(); // consultar o estoque por id e armazena a estrutura em estoque.
+
+	if (estoque.identificador == -1)
+	{ // para quando não achar o identificador dentro do estoque
+		printf("Estoque não encontrado\n");
+	}
+	else
+	{
+
+		printf("Digite o novo Identificador do Filme \n");
+		fflush(stdout);
+		scanf("%i", &estoque.identificadorFilme);
+		int c;
+		while ((c = getchar()) != '\n' && c != EOF)
+		{
+		}
+
+		printf("Digite o nova Data de Entrada:\n");
+		fflush(stdout);
+		gets(estoque.dataEntrada);
+
+		int posicao = buscarIndiceEstoque(estoque.identificador); // buscar indice do estoque vai a procura do identificador do estoque dentro da listaEstoque e retorna a posicao
+
+		listaEstoque[posicao] = estoque; // listaEstoque[posicao] é onde encontra-se o estoque a ser alterado. Estoque será a estrtutura acima atualizada.
+	}
+}
+int buscarIndiceEstoque(int identificador)
+{
+
+	for (int i = 0; i < nFilmesEstoque; i++)
+	{
+		if (listaEstoque[i].identificador == identificador)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+void removerEstoque(int indice)
+{
+	int posicao = indice + 1;
+	int i = 0;
+
+	if ((posicao < 1) || (posicao > nFilmesEstoque))
+	{
+		printf("\nPosicao invalida!\n");
+		return;
+	}
+
+	// 1. caso - remover no final do vetor
+	if (posicao == nFilmesEstoque)
+	{
+		nFilmesEstoque--;
+		return;
+	}
+
+	// 2. remove qualquer outra posicao
+	for (i = indice; i < nFilmesEstoque; i++)
+	{
+		listaEstoque[i] = listaEstoque[i + 1]; // aqui remove o estoque.
+	}
+	nFilmesEstoque--;
+}
+
+void menuEstoque()
+{
+	int opcao = -1;
+	while (encerrar == 0)
+	{
+		opcao = menuEstoqueOpcao();
+		if (opcao == 0)
+		{
+			printf("\n-------------- FIM DE PROGRAMA------------------\n");
+			encerrar = 1;
+			break;
+		}
+		else if (opcao == 1)
+		{
+			menuPrincipal();
+			break;
+		}
+		else if (opcao == 2)
+		{
+			cadastrarFilmesEstoque();
+		}
+		else if (opcao == 3)
+		{
+			listarEstoque();
+		}
+		else if (opcao == 4)
+		{															  // consulta o estoque por titulo
+			TestoqueFilme estoqueFilme = consultarEstoquePorTitulo(); // ,mostra o que foi consultado
+			if (estoqueFilme.identificador == -1)
+			{
+				printf("Filme nao encontrado no estoque.");
+			}
+			else
+			{
+				visualizarEstoque(estoqueFilme);
+			}
+		}
+		else if (opcao == 5)
+		{
+			atualizarEstoque();
+		}
+		else if (opcao == 6)
+		{
+			TestoqueFilme estoque = consultarEstoque();
+			if (estoque.identificador == -1)
+			{
+				printf("Estoque não encontrado\n");
+			}
+			else
+			{
+				int indice = buscarIndiceEstoque(estoque.identificador); // esse indice será agora buscarindicefilmes pelo filme.identificdor
+				removerEstoque(indice);									 // depois ira remover o filme pelo indice
+
+				printf("Filme Removido com Sucesso.\n");
+			}
+		}
+	}
+}
+
+int main(void)
+{
+
+	menuPrincipal();
+
+	return 0;
+}
